@@ -9,7 +9,7 @@ mkdir -p $BUILD_DIR
 
 pushd $BUILD_DIR
 #cmake -DCMAKE_INSTALL_PREFIX=$OSSIM_INSTALL_PREFIX ..
-cmake .. -DCMAKE_INSTALL_PREFIX=$OSSIM_INSTALL_PREFIX
+cmake .. 
 
 if [ $? != 0 ] ; then
    echo ERROR Generating CMake build files
