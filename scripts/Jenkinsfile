@@ -14,10 +14,12 @@ node(""){
    }
    try{
       stage("Build"){
-//         sh """
-//             ${env.WORKSPACE}/omar-opencv3_2/scripts/build.sh
-//         """
          sh """
+          pushd ${env.WORKSPACE}/omar-opencv3_2/scripts
+          ./build.sh
+          popd
+         """
+/*         sh """
              pushd ${env.WORKSPACE}/omar-opencv3_2
              mkdir -p build
              pushd build
@@ -26,6 +28,7 @@ node(""){
              popd
              popd
              """
+             */
       }
    }
    catch(e){
