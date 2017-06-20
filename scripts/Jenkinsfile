@@ -19,8 +19,12 @@ node(""){
 //         """
          sh """
              pushd ${env.WORKSPACE}/omar-opencv3_2
-             cmake .
+             mkdir -p build
+             pushd build
+             cmake ..
              make -j4
+             popd
+             popd
              """
       }
    }
