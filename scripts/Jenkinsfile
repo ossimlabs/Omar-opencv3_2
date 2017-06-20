@@ -14,9 +14,14 @@ node(""){
    }
    try{
       stage("Build"){
+//         sh """
+//             ${env.WORKSPACE}/omar-opencv3_2/scripts/build.sh
+//         """
          sh """
-             ${env.WORKSPACE}/omar-opencv3_2/scripts/build.sh
-         """
+             pushd ${env.WORKSPACE}/omar-opencv3_2
+             cmake .
+             make -j4
+             """
       }
    }
    catch(e){
