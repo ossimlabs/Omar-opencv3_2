@@ -135,13 +135,10 @@ endif()
 # OpenCV cmake options
 # ----------------------------------------------------------------------------
 
-OCV_OPTION(OPENCV_ENABLE_NONFREE "Enable non-free algorithms" ON)
-
 # Optional 3rd party components
 # ===================================================
 OCV_OPTION(WITH_AVFOUNDATION   "Use AVFoundation for Video I/O (iOS/Mac)"    ON   IF APPLE)
 OCV_OPTION(WITH_CAROTENE       "Use NVidia carotene acceleration library for ARM platform"                   ON  IF (ARM OR AARCH64) AND NOT IOS AND NOT (CMAKE_VERSION VERSION_LESS "2.8.11"))
-OCV_OPTION(WITH_VTK            "Include VTK library support (and build opencv_viz module eiher)"             ON  IF (NOT ANDROID AND NOT IOS AND NOT WINRT AND NOT CMAKE_CROSSCOMPILING) )
 OCV_OPTION(WITH_CUDA           "Include NVidia Cuda Runtime support"                                         ON  IF (NOT IOS AND NOT WINRT) )
 OCV_OPTION(WITH_CUFFT          "Include NVidia Cuda Fast Fourier Transform (FFT) library support"            ON  IF (NOT IOS AND NOT WINRT) )
 OCV_OPTION(WITH_CUBLAS         "Include NVidia Cuda Basic Linear Algebra Subprograms (BLAS) library support" OFF IF (NOT IOS AND NOT WINRT) )
@@ -284,7 +281,6 @@ if(WIN32 AND CMAKE_HOST_SYSTEM_NAME MATCHES Windows)
 else()
   ocv_update(OPENCV_LIB_INSTALL_PATH     lib${LIB_SUFFIX})
   ocv_update(OPENCV_3P_LIB_INSTALL_PATH  share/OpenCV/3rdparty/${OPENCV_LIB_INSTALL_PATH})
-  ocv_update(OPENCV_SAMPLES_SRC_INSTALL_PATH    share/OpenCV/samples)
   ocv_update(OPENCV_OTHER_INSTALL_PATH   share/OpenCV)
 
   if(NOT DEFINED OPENCV_CONFIG_INSTALL_PATH)
@@ -305,7 +301,6 @@ if(INSTALL_TO_MANGLED_PATHS)
   set(OPENCV_INCLUDE_INSTALL_PATH ${OPENCV_INCLUDE_INSTALL_PATH}/opencv-${OPENCV_VERSION})
   foreach(v
       OPENCV_3P_LIB_INSTALL_PATH
-      OPENCV_SAMPLES_SRC_INSTALL_PATH
       OPENCV_CONFIG_INSTALL_PATH
       OPENCV_DOC_INSTALL_PATH
       OPENCV_JAR_INSTALL_PATH
@@ -340,11 +335,6 @@ endif()
 # ----------------------------------------------------------------------------
 ocv_update(OPENCV_CONFIG_FILE_INCLUDE_DIR "${CMAKE_BINARY_DIR}/" CACHE PATH "Where to create the platform-dependant cvconfig.h")
 ocv_include_directories(${OPENCV_CONFIG_FILE_INCLUDE_DIR})
-
-# ----------------------------------------------------------------------------
-#  Path for additional modules
-# ----------------------------------------------------------------------------
-set(OPENCV_EXTRA_MODULES_PATH "" CACHE PATH "Where to look for additional OpenCV modules")
 
 # ----------------------------------------------------------------------------
 #  Autodetect if we are in a GIT repository
@@ -587,18 +577,6 @@ if(NOT OPENCV_LICENSE_FILE)
   set(OPENCV_LICENSE_FILE ${CMAKE_CURRENT_SOURCE_DIR}/LICENSE)
 endif()
 
-# for UNIX it does not make sense as LICENSE and readme will be part of the package automatically
-if(ANDROID OR NOT UNIX)
-  install(FILES ${OPENCV_LICENSE_FILE}
-        PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-        DESTINATION ./ COMPONENT libs)
-  if(OPENCV_README_FILE)
-    install(FILES ${OPENCV_README_FILE}
-            PERMISSIONS OWNER_READ GROUP_READ WORLD_READ
-            DESTINATION ./ COMPONENT libs)
-  endif()
-endif()
-
 # ----------------------------------------------------------------------------
 # Summary:
 # ----------------------------------------------------------------------------
@@ -606,36 +584,6 @@ status("")
 status("General configuration for OpenCV ${OPENCV_VERSION} =====================================")
 if(OPENCV_VCSVERSION)
   status("  Version control:" ${OPENCV_VCSVERSION})
-endif()
-if(OPENCV_EXTRA_MODULES_PATH AND NOT BUILD_INFO_SKIP_EXTRA_MODULES)
-  set(__dump_extra_header OFF)
-  foreach(p ${OPENCV_EXTRA_MODULES_PATH})
-    if(EXISTS ${p})
-      if(NOT __dump_extra_header)
-        set(__dump_extra_header ON)
-        status("")
-        status("  Extra modules:")
-      else()
-        status("")
-      endif()
-      set(EXTRA_MODULES_VCSVERSION "unknown")
-      if(GIT_FOUND)
-        execute_process(COMMAND "${GIT_EXECUTABLE}" describe --tags --always --dirty --match "[0-9].[0-9].[0-9]*"
-          WORKING_DIRECTORY "${p}"
-          OUTPUT_VARIABLE EXTRA_MODULES_VCSVERSION
-          RESULT_VARIABLE GIT_RESULT
-          ERROR_QUIET
-          OUTPUT_STRIP_TRAILING_WHITESPACE
-        )
-        if(NOT GIT_RESULT EQUAL 0)
-          set(EXTRA_MODULES_VCSVERSION "unknown")
-        endif()
-      endif()
-      status("    Location (extra):" ${p})
-      status("    Version control (extra):" ${EXTRA_MODULES_VCSVERSION})
-    endif()
-  endforeach()
-  unset(__dump_extra_header)
 endif()
 
 # ========================== build platform ==========================
