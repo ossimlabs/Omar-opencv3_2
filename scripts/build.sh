@@ -8,13 +8,15 @@ source $SCRIPT_DIR/env.sh
 mkdir -p $BUILD_DIR
 
 pushd $BUILD_DIR
-cmake -DCMAKE_INSTALL_PREFIX=$OSSIM_INSTALL_PREFIX ..
+#cmake -DCMAKE_INSTALL_PREFIX=$OSSIM_INSTALL_PREFIX ..
+cmake ..
+
 if [ $? != 0 ] ; then
    echo ERROR Generating CMake build files
    exit 1
 fi
 
-make -j4 install
+make -j4 
 
 if [ $? != 0 ] ; then
    echo ERROR Building files
