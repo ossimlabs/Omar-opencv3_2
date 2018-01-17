@@ -26,7 +26,7 @@ node("")
       
       stage("Build")
       {
-         sh "scripts/build.sh install"
+         sh "scripts/build.sh ${env.WORKSPACE}/install"
          sh "pwd"        
          sh "ls -la"
       }
