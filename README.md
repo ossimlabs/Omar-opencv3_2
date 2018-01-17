@@ -35,7 +35,7 @@ CUDA:
 
 #### Disclaimer: Not all opencv compliant code will work with this version of opencv. Some modules have been removed to make the code more concise and in addition some features might be disabled in the included above modules because of such. 
 
-### build process
+### Build Process
 Simply run `scripts/build.sh [<install-dir>]` 
 If the install dir is omitted, the build will generate a "sandbox" installation under the `install` subdirectory under the repo's top directory.
 
