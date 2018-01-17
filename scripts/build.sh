@@ -1,26 +1,43 @@
 #!/bin/bash 
-pushd `dirname $0` >/dev/null
-export SCRIPT_DIR=`pwd -P`
-popd >/dev/null
+SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+BUILD_DIR=$SCRIPT_DIR/../build
+CMAKE_INSTALL_PREFIX=$1 
+if [ -z $CMAKE_INSTALL_PREFIX ] ; then
+  CMAKE_INSTALL_PREFIX=$SCRIPT_DIR/../install
+fi
 
-source $SCRIPT_DIR/env.sh
-
-mkdir -p $BUILD_DIR
+mkdir -p $SCRIPT_DIR/../build
+if [ $? != 0 ]; then
+  echo "Error encountered creating build directory. Check the permissions on $SCRIPT_DIR."
+  popd; exit 1
+fi
 
 pushd $BUILD_DIR
-#cmake -DCMAKE_INSTALL_PREFIX=$OSSIM_INSTALL_PREFIX ..
-cmake .. 
-
-if [ $? != 0 ] ; then
-   echo ERROR Generating CMake build files
-   exit 1
+rm CMakeCache.txt
+cmake  \
+   -DCMAKE_BUILD_TYPE=Release \
+   -DCMAKE_INSTALL_PREFIX=$CMAKE_INSTALL_PREFIX \
+   -DBUILD_TIFF=ON \
+   -DBUILD_EXAMPLES=OFF \
+   -DCUDA_GENERATION=Auto \
+   -DBUILD_NEW_PYTHON_SUPPORT=ON \
+   -DWITH_CUDA=ON \
+   ..
+if [ $? != 0 ]; then
+  echo "Error encountered in cmake command."
+  popd; exit 1
 fi
 
-make -j4 
-
-if [ $? != 0 ] ; then
-   echo ERROR Building files
-   exit 1
+make -j8
+if [ $? != 0 ]; then
+  echo "Error encountered in build."
+  popd; exit 1
 fi
 
+make install
+if [ $? != 0 ]; then
+  echo "Error encountered in install."
+  popd; exit 1
+fi
 popd
+

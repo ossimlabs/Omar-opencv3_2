@@ -1,43 +1,49 @@
 def notifyObj
-node(""){
+node("")
+{
    env.WORKSPACE=pwd()
-
-
-   stage("Checkout"){
-        dir("ossim-ci") {
-            git branch: "${OSSIM_GIT_BRANCH}", url: "https://github.com/ossimlabs/ossim-ci.git"
-        }
-        dir("omar-opencv3_2") {
-            git branch: "${OSSIM_GIT_BRANCH}", url: "https://github.com/ossimlabs/omar-opencv3_2.git"
-        }
-        notifyObj = load "${env.WORKSPACE}/ossim-ci/jenkins/pipeline/notify.groovy"
-   }
-   try{
-      stage("Build"){
+   try
+   {
+      stage("Checkout")
+      { 
+         git branch: "${OSSIM_GIT_BRANCH}", 
+         url: "${GIT_PUBLIC_SERVER_URL}/opencv-3.2-minimal-for-ossim.git"
+      }
+      
+      stage("Download Artifacts")
+      {
+         step ([$class: "CopyArtifact",
+                projectName: "ossim-ci-${OSSIM_GIT_BRANCH}",
+                filter: "ossim-ci-${OSSIM_GIT_BRANCH}.tgz",
+                flatten: true])
+         sh "tar xvfz ossim-ci-${OSSIM_GIT_BRANCH}.tgz"
+         notifyObj = load "${env.WORKSPACE}/ossim-ci/jenkins/pipeline/notify.groovy"
+      }
+      
+      stage("Build")
+      {
          sh """
-          pushd ${env.WORKSPACE}/omar-opencv3_2/scripts
-          ./build.sh
-          popd
+            pushd ${env.WORKSPACE}/opencv-3.2-minimal-for-ossim/scripts
+            ./build.sh ${env.WORKSPACE}/install
+            popd
          """
-/*         sh """
-             pushd ${env.WORKSPACE}/omar-opencv3_2
-             mkdir -p build
-             pushd build
-             cmake ..
-             make -j4
-             popd
-             popd
-             """
-             */
+      }
+      
+      stage("Archive")
+      {
+         sh "tar cvfz opencv-minimal.tgz -C install ."
+         archiveArtifacts "opencv-minimal.tgz"
       }
    }
-   catch(e){
-        echo e.toString()
-        currentBuild.result = "FAILED"
-        notifyObj?.notifyFailed()
-    }
+   catch(e)
+   {
+      echo e.toString()
+      currentBuild.result = "FAILED"
+      notifyObj?.notifyFailed()
+   }
 
-  stage("Clean Workspace"){
-     step([$class: 'WsCleanup'])
-  }
+   stage("Clean Workspace")
+   {
+      step([$class: 'WsCleanup'])
+   }
 }
