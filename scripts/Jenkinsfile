@@ -20,20 +20,22 @@ node("")
                 flatten: true])
          sh "tar xvfz ossim-ci-${OSSIM_GIT_BRANCH}.tgz"
          notifyObj = load "${env.WORKSPACE}/ossim-ci/jenkins/pipeline/notify.groovy"
+         sh "pwd"        
+         sh "ls -la"
       }
       
       stage("Build")
       {
-         sh """
-            pushd ${env.WORKSPACE}/opencv-3.2-minimal-for-ossim/scripts
-            ./build.sh ${env.WORKSPACE}/install
-            popd
-         """
+         sh "scripts/build.sh install"
+         sh "pwd"        
+         sh "ls -la"
       }
       
       stage("Archive")
       {
          sh "tar cvfz opencv-minimal.tgz -C install ."
+         sh "pwd"        
+         sh "ls -la"
          archiveArtifacts "opencv-minimal.tgz"
       }
    }
