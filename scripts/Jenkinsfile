@@ -8,6 +8,8 @@ node("")
       { 
          git branch: "${OSSIM_GIT_BRANCH}", 
          url: "${GIT_PUBLIC_SERVER_URL}/opencv-3.2-minimal-for-ossim.git"
+         sh "echo ; echo 'PWD = $pwd'; echo"        
+         sh "echo ; ls -la'; echo"
       }
       
       stage("Download Artifacts")
