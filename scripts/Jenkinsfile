@@ -8,8 +8,6 @@ node("")
       { 
          git branch: "${OSSIM_GIT_BRANCH}", 
          url: "${GIT_PUBLIC_SERVER_URL}/opencv-3.2-minimal-for-ossim.git"
-         sh "pwd"        
-         sh "ls -la"
       }
       
       stage("Download Artifacts")
@@ -20,23 +18,17 @@ node("")
                 flatten: true])
          sh "tar xvfz ossim-ci-${OSSIM_GIT_BRANCH}.tgz"
          notifyObj = load "${env.WORKSPACE}/ossim-ci/jenkins/pipeline/notify.groovy"
-         sh "pwd"        
-         sh "ls -la"
       }
       
       stage("Build")
       {
          sh "scripts/build.sh ${env.WORKSPACE}/install"
-         sh "pwd"        
-         sh "ls -la"
       }
       
       stage("Archive")
       {
-         sh "tar cvfz opencv-minimal.tgz -C install ."
-         sh "pwd"        
-         sh "ls -la"
-         archiveArtifacts "opencv-minimal.tgz"
+         sh "tar cvfz opencv-3.2-minimal-install.tgz -C install ."
+         archiveArtifacts "opencv-3.2-minimal-install.tgz"
       }
    }
    catch(e)
