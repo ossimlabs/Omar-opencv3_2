@@ -16,12 +16,13 @@ pushd $BUILD_DIR
 rm CMakeCache.txt
 cmake  \
    -DCMAKE_BUILD_TYPE=Release \
+   -DBUILD_SHARED_LIBS=OFF \
    -DCMAKE_INSTALL_PREFIX=$CMAKE_INSTALL_PREFIX \
    -DBUILD_TIFF=ON \
    -DBUILD_EXAMPLES=OFF \
    -DCUDA_GENERATION=Auto \
    -DBUILD_NEW_PYTHON_SUPPORT=ON \
-   -DWITH_CUDA=ON \
+   -DWITH_CUDA=OFF \
    ..
 if [ $? != 0 ]; then
   echo "Error encountered in cmake command."
@@ -39,5 +40,8 @@ if [ $? != 0 ]; then
   echo "Error encountered in install."
   popd; exit 1
 fi
+
+#cp $CMAKE_INSTALL_PREFIX/share/OpenCV/3rdparty/lib/* $CMAKE_INSTALL_PREFIX/lib/
+
 popd
 

@@ -22,7 +22,7 @@ node("")
       
       stage("Build")
       {
-         sh "scripts/build.sh ${env.WORKSPACE}/install"
+         sh "scripts/build-static.sh ${env.WORKSPACE}/install"
       }
       
       stage("Archive")

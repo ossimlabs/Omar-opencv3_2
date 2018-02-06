@@ -425,7 +425,7 @@ endif()
 # ----------------------------------------------------------------------------
 
 include(cmake/OpenCVFindLibsGrfmt.cmake)
-include(cmake/OpenCVFindLibsGUI.cmake)
+#include(cmake/OpenCVFindLibsGUI.cmake)
 include(cmake/OpenCVFindLibsVideo.cmake)
 include(cmake/OpenCVFindLibsPerf.cmake)
 include(cmake/OpenCVFindLAPACK.cmake)
