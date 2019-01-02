@@ -1,5 +1,6 @@
 #!/bin/bash 
 SCRIPT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+export CMAKE_DIR=$PWD
 BUILD_DIR=$SCRIPT_DIR/../build
 CMAKE_INSTALL_PREFIX=$1 
 if [ -z $CMAKE_INSTALL_PREFIX ] ; then
