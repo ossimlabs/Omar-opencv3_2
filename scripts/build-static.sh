@@ -12,9 +12,14 @@ if [ $? != 0 ]; then
   popd; exit 1
 fi
 
+if [ "${BUILD_FORTIFY}" == "true" ] ; then
+  INSERT_FORTIFY_TOOLCHAIN=-DCMAKE_TOOLCHAIN_FILE=${CMAKE_DIR}/fortify/fortify_linux_toolchain.cmake
+  echo;echo "Building with fortify toolchain"; echo
+fi
+
 pushd $BUILD_DIR
 rm CMakeCache.txt
-cmake  \
+cmake "$INSERT_FORTIFY_TOOLCHAIN" \
    -DCMAKE_BUILD_TYPE=Release \
    -DBUILD_SHARED_LIBS=OFF \
    -DCMAKE_INSTALL_PREFIX=$CMAKE_INSTALL_PREFIX \
